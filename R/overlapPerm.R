@@ -10,7 +10,7 @@
 ##' density estimated by concatenating A and B.  Setting \code{parametric = F} 
 ##' will instead give a tradiational permutation test (not yet implemented.)
 ##' 
-##' @inheritParams overalpEstWindow
+##' @inheritParams overlapEstWindow
 ##' @param nperm The number of simulated samples or permutations to generate.
 ##' @param two.sided If \code{TRUE} the p-values returned for the excess are 
 ##' two-sided.P-values for the overlap are always one-sided.
@@ -46,7 +46,7 @@ overlapPerm <- function(A,B,t0=0,t1=24,adjust=0.8,nperm=1e3,kmax=3,
 	 ## Compute p-values
 	 p <- c()
 	 if(two.sided){
-	   p[1] <- mean(abs(res[1,]-overlapRef) <= abs(obs$overlap-overlapRef))	
+	   p[1] <- mean(abs(res[1,]-overlapRef) >= abs(obs$overlap-overlapRef))	
 	   p[2] <- mean(abs(res[2,]-excessRef) >= abs(obs$excess-excessRef))
 	 } else{
      p[1] <- ifelse({obs$overlap-overlapRef} >= 0,mean(res[1,] >= obs$overlap),
@@ -56,9 +56,9 @@ overlapPerm <- function(A,B,t0=0,t1=24,adjust=0.8,nperm=1e3,kmax=3,
 	 }
 	 	
 	 table <- matrix(c(obs$overlap,overlapRef,p[1],obs$excess,excessRef,p[2]),
-	                 2,2,byrow=T)
+	                 2,3,byrow=T)
 	 rownames(table) <- c('overlap','excess')
-	 colnames(table) <- c('observed','refrence','p-value')
+	 colnames(table) <- c('observed','reference','p-value')
 	 
 	 out <- list(table=table,window=c(t0,t1),nperm=nperm,
 	 		parametric=parametric,two.sided=two.sided,overlapRef=overlapRef,
@@ -68,9 +68,12 @@ overlapPerm <- function(A,B,t0=0,t1=24,adjust=0.8,nperm=1e3,kmax=3,
 	 return(out)
 }
 
-print.overlapPermObj <- function(obj){
-	print(obj$table)
-	sides <- ifelse(two.sided,'two-sided','one-sided')
-	type  <- ifelse(parametric,'parametric','non-parametric')
-	s <- sprintf('%s permutation tests (%s)')
+print.overlapPermObj <- function(obj,digits=3){
+	print(round(obj$table,digits))
+	sides <- with(obj,ifelse(two.sided,'Two-sided','One-sided'))
+	type  <- with(obj,ifelse(parametric,'parametric','non-parametric'))
+	
+	s <- sprintf('%s permutation tests (%s) for difference from refrence.\n',
+	             sides,type)
+	cat(s)
 }
