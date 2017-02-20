@@ -1,0 +1,11 @@
+Package: camtrap
+Type: Package
+Title: Inference for camera trap data.
+Version: 0.0.1
+Date: 2017-02-18
+Author: James Henderson
+Maintainer: James Henderson <jbhender@umich.edu>
+Description: More about what it does (maybe more than one line)
+License: GPL-3
+Depends: overlap
+RoxygenNote: 6.0.1
