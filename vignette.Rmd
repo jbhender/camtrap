@@ -2,7 +2,8 @@
 title: "Inference for camera trap data using 'camtrap'."
 author: "James Henderson"
 date: "2/20/2017"
-output: html_document
+output:
+ github_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -105,5 +106,5 @@ generating the two observation vectors are equal during the time requested inter
 
 ```{r}
 perm <- overlapPerm(tigerObs,pigObs,t0=16,t1=21,nperm=100)
-#print.overlapPermObj(perm)
+print.overlapPermObj(perm)
 ```
