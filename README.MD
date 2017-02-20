@@ -1,0 +1,1 @@
+See the vignette for basic usage and info.
