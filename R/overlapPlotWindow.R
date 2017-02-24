@@ -11,6 +11,9 @@
 #' 
 #' @return None. Plots to the current device.
 #' @export
+#' @examples
+#' data(simulatedData)
+#' overlapPlotWindow(tigerObs,pigObs,t0=18,t1=22)
 overlapPlotWindow <-function(A,B,t0=0,t1=24,adjust=0.8,kmax=3,
                              type=c('overlap','excess'),mark.window=T,
                              n.grid=1e3,...)
@@ -56,3 +59,4 @@ overlapPlotWindow <-function(A,B,t0=0,t1=24,adjust=0.8,kmax=3,
 	}
 	if(mark.window) abline(v=c(t0,t1),lty='dashed',col='darkgrey')
 }
+
