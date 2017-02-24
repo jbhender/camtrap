@@ -5,11 +5,7 @@ Version: 0.0.2
 Date: 2017-02-24
 Author: James Henderson
 Maintainer: James Henderson <jbhender@umich.edu>
-Description: This package extends the functionality of the overlap for
-interrogating time-of-day data.  Additional functionality includes:
-1) focusing attention on a specific window during the day;
-2) examining 'excess' in addition to 'overlap'; 
-2) use of permutation tests for hypothesis testing.
+Description: This package extends the functionality of the overlap for interrogating time-of-day data.
 License: GPL-3
 Depends: overlap
 RoxygenNote: 6.0.1
