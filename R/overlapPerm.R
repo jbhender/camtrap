@@ -67,13 +67,3 @@ overlapPerm <- function(A,B,t0=0,t1=24,adjust=0.8,nperm=1e3,kmax=3,
 	 class(out) <- c('overlapPermObj','list')
 	 return(out)
 }
-
-print.overlapPermObj <- function(obj,digits=3){
-	print(round(obj$table,digits))
-	sides <- with(obj,ifelse(two.sided,'Two-sided','One-sided'))
-	type  <- with(obj,ifelse(parametric,'parametric','non-parametric'))
-	
-	s <- sprintf('%s permutation tests (%s) for difference from refrence.\n',
-	             sides,type)
-	cat(s)
-}
