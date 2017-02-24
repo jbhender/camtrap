@@ -4,27 +4,44 @@
 \alias{overlapPlotWindow}
 \title{Plot overlap or excess within specified window.}
 \usage{
-overlapPlotWindow(A, B, t0 = 0, t1 = 24, adjust = 0.8, kmax = 3,
-  type = c("overlap", "excess"), mark.window = T, n.grid = 1000, ...)
+overlapPlotWindow(A, B, t0 = 0, t1 = 24, type = c("both", "overlap",
+  "excess"), xscale = 24, xcenter = c("noon", "midnight"), extend = NULL,
+  linetype = c("solid", "solid"), linecol = c("black", "blue"),
+  linewidth = c(1, 1), overlapcol = "lightblue", excesscol = "lightgrey",
+  mark.window = T, adjust = 0.8, kmax = 3, n.grid = 1000, ...)
 }
 \arguments{
 \item{A}{Numeric vectors of sighting times in [0,2pi]}
 
 \item{B}{Numeric vectors of sighting times in [0,2pi]}
 
-\item{t0}{The window over which to estimate the overlap and excess stats}
+\item{t0, t1}{Window times are not scaled internally and should chosen by 
+the user to reflect \code{xscale}. They are shifter internally to reflect 
+\code{xcenter}.}
 
-\item{t1}{The window over which to estimate the overlap and excess stats}
+\item{type}{Character string with \code{overlap} to plot the overlap, 
+\code{excess} to plot the area between the densities or \code{both} (default)
+for both. Partial matching okay.}
+
+\item{xscale}{scale for x-axis: default is 24 for time in hours, 
+\code{xscale=NA} produces a scale in radians}
+
+\item{xcenter}{where to center the x-axis: 'noon' (default) or 'midnight'}
+
+\item{extend}{If not \code{NULL}, the plot is extended by 3 hours on both
+sides to emphasize the circularity and \code{extend} specifies the color.}
+
+\item{linecol}{The colors to use for plotting the densities curves.}
+
+\item{overlapcol, excesscol}{The color(s) to use for plotting the overlap
+or excess, respectively.}
+
+\item{mark.window}{Logical indicating whether to plot vertical lines at the
+window boundaries.}
 
 \item{adjust}{See \code{\link{overlapEst}}.}
 
 \item{kmax}{See \code{\link{overlapEst}}.}
-
-\item{type}{Character string with \code{overlap} to plot the overlap, 
-\code{excess} to plot the area between the densities. Partial matching okay.}
-
-\item{mark.window}{Logical indicating whether to plot vertical lines at the
-window boundaries.}
 }
 \value{
 None. Plots to the current device.
@@ -32,4 +49,15 @@ None. Plots to the current device.
 \description{
 Densities are plotted for the entire day, but the overlap or excess are only
 shown within the requested window.
+}
+\details{
+This function is intended to resemble \code{\link{overlapPlot}} from the
+overlap package with credit to its author, Mike Meredith.
+However, not all functionality from that function has been 
+put in place here yet -- rug plotting reamins to do. Currently does not 
+handle wrapping of window around edges of plot
+}
+\examples{
+data(simulatedData)
+overlapPlotWindow(tigerObs,pigObs,t0=18,t1=22)
 }
