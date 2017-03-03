@@ -1,7 +1,7 @@
 Inference for camera trap data using `camtrap`.
 ================
 James Henderson
-2/25/2017
+3/3/2017
 
 Introduction
 ------------
@@ -183,6 +183,6 @@ print(perm)
 ```
 
     ##         observed reference p-value
-    ## overlap    0.428         1    0.23
+    ## overlap    0.428         1    0.25
     ## excess     0.236         0    0.00
     ## Two-sided permutation tests (parametric) for difference from refrence.
