@@ -70,9 +70,6 @@ To focus on a specific time interval use the 'window' versions of these function
 overlapPlotWindow(tigerObs,pigObs,t0=0,t1=24)
 ```
 
-    ## Warning in if (xcenter == "noon") {: the condition has length > 1 and only
-    ## the first element will be used
-
 ![](vignette_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 ``` r
@@ -95,15 +92,12 @@ Comparing the output of `overlapEst` and `overlapEstWindow` you can see that the
 ### Understanding the excess
 
 In addition to estimating the overlap for a fixed user-provided window, the `camptrap` package also estimates the "excess" defined here to mean the area between the density curves:
-excess = ∫<sub>*t*<sub>0</sub></sub><sup>*t*<sub>1</sub></sup>*f*<sub>1</sub>(*s*)−*f*<sub>2</sub>(*s*)*d**s*.
+*E*<sub>*n**e**t*</sub>(*t*<sub>0</sub>, *t*<sub>1</sub>)=∫<sub>*t*<sub>0</sub></sub><sup>*t*<sub>1</sub></sup>*f*<sub>1</sub>(*s*)−*f*<sub>2</sub>(*s*)*d**s*.
  The `type` option can be used in `overlapPlotWindow` to display the excess in place of the overlap.
 
 ``` r
 overlapPlotWindow(tigerObs,pigObs,t0=16,t1=21,type='excess')
 ```
-
-    ## Warning in if (xcenter == "noon") {: the condition has length > 1 and only
-    ## the first element will be used
 
 ![](vignette_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
@@ -122,20 +116,73 @@ overlapEstWindow(tigerObs,pigObs,t0=16,t1=21)
 
 Examining the output above, we can say that the difference in the proportions of tiger and pig activity between 16:00 and 21:00 is nearly 30%. As currently computed, the excess gives the *net* difference between the curves. We should consider alternate treatments of this such as:
 
-excess = ∫<sub>*t*<sub>0</sub></sub><sup>*t*<sub>1</sub></sup>(*f*<sub>1</sub>(*s*)−*f*<sub>2</sub>(*s*))<sub>+</sub>*d**s*  ∨  ∫<sub>*t*<sub>0</sub></sub><sup>*t*<sub>1</sub></sup>(*f*<sub>2</sub>(*s*)−*f*<sub>1</sub>(*s*))<sub>+</sub>*d**s*,
+*E*<sub>*m**a**x*</sub>(*t*<sub>0</sub>, *t*<sub>1</sub>)=∫<sub>*t*<sub>0</sub></sub><sup>*t*<sub>1</sub></sup>(*f*<sub>1</sub>(*s*)−*f*<sub>2</sub>(*s*))<sub>+</sub>*d**s*  ∨  ∫<sub>*t*<sub>0</sub></sub><sup>*t*<sub>1</sub></sup>(*f*<sub>2</sub>(*s*)−*f*<sub>1</sub>(*s*))<sub>+</sub>*d**s*,
  where ( ⋅ )<sub>+</sub> = min(⋅, 0).
 
-Inferece using Permutation Tests
---------------------------------
+Finding the points of intersection
+----------------------------------
 
-Based on these images, tigers and pigs clearly follow different patterns of activity. However, in other cases we may wish to assess the significance of an observed difference relative to a specific null hypothesis. This can be done using the `overlapPerm` function, which tests against the null hypothesis that the densities generating the two observation vectors are equal during the time requested interval.
+The function `overlapCross` can be used to find the points at which two density curves cross. We will illustrate using the Kernici data from the `overlap` package.
 
 ``` r
-perm <- overlapPerm(tigerObs,pigObs,t0=16,t1=21,nperm=100)
+data('kerinci')
+head(kerinci)
+```
+
+    ##   Zone   Sps  Time
+    ## 1    1 tiger 0.175
+    ## 2    1 tiger 0.787
+    ## 3    1 tiger 0.247
+    ## 4    1 tiger 0.591
+    ## 5    1 tiger 0.500
+    ## 6    1 tiger 0.564
+
+``` r
+with(kerinci,table(Sps,Zone))
+```
+
+    ##          Zone
+    ## Sps         1   2   3   4
+    ##   boar      0   7   6  15
+    ##   clouded  27  10  17  32
+    ##   golden   14  26  38  26
+    ##   macaque  23 125  59  66
+    ##   muntjac  11  99  61  29
+    ##   sambar    1  14   5   5
+    ##   tapir    13  61  42  65
+    ##   tiger    15  83  52  51
+
+Note that the times there are given in \[0,1\], so we will multiply by 2*π* to scale to radians. The function will find all crossings, provided the minimal time between crossings is longer 1/`n.grid`.
+
+``` r
+macaque3 <- with(kerinci,Time[which(Sps=='macaque' & Zone==3)])*2*pi
+macaque4 <- with(kerinci,Time[which(Sps=='macaque' & Zone==4)])*2*pi
+crossings <- overlapCross(macaque3,macaque4,scale24=T)
+crossings
+```
+
+    ## [1]  2.867589  4.229762  7.439836 12.658345 19.030563 20.842055
+
+We can extract the crossings between 6am and 6pm as shown below.
+
+``` r
+tt <- crossings[which(crossings > 6 & crossings < 18)]
+overlapPlotWindow(macaque3,macaque4,xcenter='noon',tt[1],tt[2])
+```
+
+![](vignette_files/figure-markdown_github/overlap%20window-1.png)
+
+Inference using Permutation Tests
+---------------------------------
+
+Based on these images, tigers and pigs clearly follow different patterns of activity. However, in other cases such as when comparing macaques from zones 3 and 4, we may wish to assess the significance of an observed difference relative to a specific null hypothesis. This can be done using the `overlapPerm` function, which tests against the null hypothesis that the densities generating the two observation vectors are equal during the requested time interval.
+
+``` r
+perm <- overlapPerm(macaque3,macaque4,t0=tt[1],t1=tt[2],nperm=100)
 print(perm)
 ```
 
     ##         observed reference p-value
-    ## overlap    0.125         1       0
-    ## excess     0.296         0       0
+    ## overlap    0.428         1    0.23
+    ## excess     0.236         0    0.00
     ## Two-sided permutation tests (parametric) for difference from refrence.

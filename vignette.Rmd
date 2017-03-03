@@ -1,7 +1,7 @@
 ---
 title: "Inference for camera trap data using `camtrap`."
 author: "James Henderson"
-date: "2/25/2017"
+date: "3/3/2017"
 output:
  github_document: default
 ---
@@ -35,7 +35,7 @@ library(devtools)
 ```
 
 You can then install the most recent version of `camtrap` directly from 
-git hub as indicated in the comments below.
+GitHub as indicated in the comments below.
 
 ```{r camtrap}
 #install.packages('overlap')
@@ -43,7 +43,7 @@ git hub as indicated in the comments below.
 library(camtrap)
 ```
 
-The `overlap` is loaded automatically and must be installed prior to installing
+The `overlap` package is loaded automatically and must be installed prior to installing
 `camtrap`. The examples in the following section will make use of data from
 `overlap`.
 
@@ -55,37 +55,47 @@ head(tigerObs); head(pigObs)
 ## Overlap and Excess for a Fixed Window
 
 The overlap package takes two vectors of observation times in radians,
-fits densities to each vector, and estimates the area overlap defined as the 
-area under the minimum of the two density functions.
+fits densities to each vector, and then estimates the overlap defined as the 
+area under the minimum of the two density functions:
+
+$$
+\textrm{overlap} = \int_{t_0}^{t_1} f_1(s) \wedge f_2(s) ds.
+$$
 
 ```{r}
 overlapPlot(tigerObs,pigObs)
 overlapEst(tigerObs,pigObs)
 ```
 
-To focus in on a specific time interval use the following 'window' versions of
+To focus on a specific time interval use the 'window' versions of
 these functions provided in this package. The time interval of interest is 
-specified using `t0` and `t1`. These window endpoints should be given
-on a 24 hour scale and will be scaled interanlly to radians. 
+specified using `t0` and `t1`. For `overlapEstWindow` these endpoints should be 
+given on a 24 hour scale; the scale for `overlapPlotWindow` can be specified
+using the `xscale` option. 
  
 ```{r}
 overlapPlotWindow(tigerObs,pigObs,t0=0,t1=24)
 overlapEstWindow(tigerObs,pigObs,t0=0,t1=24)
 ```
 
-The plotting function currently does not include the full suite of options that
-`overlapPlot` does.
+The plotting function should include the same options as for
+`overlapPlot`, with the exception of providing a 'rug' plot which remains
+to be implemented. 
 
 Comparing the output of `overlapEst` and `overlapEstWindow` you can see
 that the overlap estimate most closely resembles "Dhat1". Both estimates directly
 use the area under the fitted density curves, but the version in this package
-uses adapative quadrature (i.e. `integrate`) in place of a fixed grid.  
+uses adaptive quadrature (i.e. `integrate`) in place of a fixed grid.  
 
 ### Understanding the excess
 
 In addition to estimating the overlap for a fixed user-provided window,
 the `camptrap` package also estimates the "excess" defined here to mean 
-the area between the density curves. The `type` option can be used in
+the area between the density curves:
+$$
+E_{net}(t_0,t_1) = \int_{t_0}^{t_1} f_1(s) - f_2(s) ds. 
+$$
+The `type` option can be used in
 `overlapPlotWindow` to display the excess in place of the overlap.
 
 ```{r}
@@ -96,16 +106,51 @@ overlapEstWindow(tigerObs,pigObs,t0=16,t1=21)
 Examining the output above, we can say that the difference in the proportions of
 tiger and pig activity between 16:00 and 21:00 is nearly 30%. As currently
 computed, the excess gives the *net* difference between the curves. We 
-should consider alternate treatments of this.
+should consider alternate treatments of this such as:
 
-## Inferece using Permutation Tests ##
+$$
+E_{max}(t_0,t_1) = \int_{t_0}^{t_1} (f_1(s) - f_2(s))_+ ds \quad \vee 
+\quad \int_{t_0}^{t_1} (f_2(s) - f_1(s))_+ ds,
+$$
+where $(\cdot)_+ = \min(\cdot,0)$.
+
+## Finding the points of intersection
+The function `overlapCross` can be used to find the points at which
+two density curves cross. We will illustrate using the Kernici data
+from the `overlap` package. 
+
+```{r kernici}
+data('kerinci')
+head(kerinci)
+with(kerinci,table(Sps,Zone))
+```
+
+Note that the times there are given in [0,1], so we will multiply
+by $2\pi$ to scale to radians. The function will find all crossings, provided 
+the minimal time between crossings is longer 1/`n.grid`. 
+
+```{r macaque crossings}
+macaque3 <- with(kerinci,Time[which(Sps=='macaque' & Zone==3)])*2*pi
+macaque4 <- with(kerinci,Time[which(Sps=='macaque' & Zone==4)])*2*pi
+crossings <- overlapCross(macaque3,macaque4,scale24=T)
+crossings
+```
+
+We can extract the crossings between 6am and 6pm as shown below. 
+```{r overlap window}
+tt <- crossings[which(crossings > 6 & crossings < 18)]
+overlapPlotWindow(macaque3,macaque4,xcenter='noon',tt[1],tt[2])
+```
+
+## Inference using Permutation Tests ##
 Based on these images, tigers and pigs clearly follow different patterns of 
-activity.  However, in other cases we may wish to assess the signficance of an observed
+activity. However, in other cases such as when comparing macaques from zones 3 
+and 4, we may wish to assess the significance of an observed
 difference relative to a specific null hypothesis. This can be done using the 
 `overlapPerm` function, which tests against the null hypothesis that the densities
-generating the two observation vectors are equal during the time requested interval.
+generating the two observation vectors are equal during the requested time interval.
 
-```{r}
-perm <- overlapPerm(tigerObs,pigObs,t0=16,t1=21,nperm=100)
+```{r overlapPerm macaque}
+perm <- overlapPerm(macaque3,macaque4,t0=tt[1],t1=tt[2],nperm=100)
 print(perm)
 ```
