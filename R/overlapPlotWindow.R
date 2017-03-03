@@ -60,10 +60,11 @@ overlapPlotWindow <-function(A,B,t0=0,t1=24,type=c('both','overlap','excess'),
   }
   if(isMidnt){
     xxRad <- xxRad - pi
-    if(t0 > 12) t0 <- t0-24
-    if(t1 > 12) t1 <- t1-24
+    t0 <- {t0-12}
+    t1 <- {t1-12}
   }
   xx <- xxRad*xsc
+  
   # Define density functions #
   dA <- function(x){
     densityFit(A,x,bw.A)	
@@ -105,13 +106,13 @@ overlapPlotWindow <-function(A,B,t0=0,t1=24,type=c('both','overlap','excess'),
 	# Plot time axis #
   if(useArgs$xaxt!='n'){
     if(!is.na(xscale)){
-      if(xcenter=='noon'){
+      if(!isMidnt){
         axis(1,seq(0,24,6),paste(seq(0,24,6),'00',sep=':'))
       } else{
         axis(1,seq(-12,12,6),paste(c(12,18,0,6,12),'00',sep=":"))
       }
     } else{
-      if(xcenter=='noon'){
+      if(!isMidnt){
         piScale <- c(expression(0),
                      expression(pi/2),
                      expression(pi),
@@ -129,13 +130,13 @@ overlapPlotWindow <-function(A,B,t0=0,t1=24,type=c('both','overlap','excess'),
     }
   }  
 	# plot the curves #
-	if(type=='overlap' || type=='both'){
+	if(type=='overlap' | type=='both'){
 	  # add a polygon for the overlap in the window only #
 	  xx2 <- c(t0,seq(t0,t1,length.out=n.grid),t1)
 	  yy <- c(0,fmin(seq(t0,t1,length.out=n.grid)/12*pi),0)/xsc
 	  polygon(xx2,yy,col=overlapcol,border=NA)	 
 	}
-	if(type=='excess' || type=='both'){
+	if(type=='excess' | type=='both'){
 	  # add a polygon for the excess
 	  xx2 <- c(seq(t0,t1,length.out=n.grid),seq(t1,t0,length.out=n.grid))
 	  yy <- c(fmax(seq(t0,t1,length.out=n.grid)/12*pi)/xsc,
