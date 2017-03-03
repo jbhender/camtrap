@@ -55,7 +55,7 @@ This function is intended to resemble \code{\link{overlapPlot}} from the
 overlap package with credit to its author, Mike Meredith.
 However, not all functionality from that function has been 
 put in place here yet -- rug plotting reamins to do. Currently does not 
-handle wrapping of window around edges of plot
+handle wrapping of window around edges of plot.
 }
 \examples{
 data(simulatedData)

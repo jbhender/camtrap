@@ -10,9 +10,9 @@ overlapCross(A, B, adjust = 0.8, kmax = 3, n.grid = 128, scale24 = T)
 \item{A, B}{Numeric vectors of sighting times in radians, i.e. [0,2pi]}
 
 \item{adjust}{Scaling factor for the bandwidth estimate, 
-see \code{\link{overlap::overlapEst}}}
+see \code{\link{overlapEst}}}
 
-\item{kmax}{Paramater passed to getBandWidth, see overlapEst}
+\item{kmax}{Parameter passed to \code{getBandWidth}, see \code{overlapEst}.}
 
 \item{n.grid}{The number of grid points used to find rough crossing windows}
 
@@ -30,6 +30,6 @@ This function is designed for use with relatively smooth densities with only
 a few crossings. It first estimates densities using the provided options
 and data. It then finds intervals where crossings occur using a grid search 
 with \code{n.grid} points over [0,2pi] before calling \code{\link{uniroot}}
-to numerically approximat the crossings in each interval using the
+to numerically approximate the crossings in each interval using the
 difference between densities.
 }
