@@ -1,7 +1,7 @@
 Inference for camera trap data using `camtrap`.
 ================
 James Henderson
-3/3/2017
+3/4/2017
 
 Introduction
 ------------
@@ -175,14 +175,25 @@ overlapPlotWindow(macaque3,macaque4,xcenter='noon',tt[1],tt[2])
 Inference using Permutation Tests
 ---------------------------------
 
-Based on these images, tigers and pigs clearly follow different patterns of activity. However, in other cases such as when comparing macaques from zones 3 and 4, we may wish to assess the significance of an observed difference relative to a specific null hypothesis. This can be done using the `overlapPerm` function, which tests against the null hypothesis that the densities generating the two observation vectors are equal during the requested time interval.
+Based on these images, tigers and pigs clearly follow different patterns of activity. However, in other cases such as when comparing the same species from different regions we may wish to assess the significance of an observed difference relative to a specific null hypothesis. For example, when making intraspecies comparisions, one may wish to assess whether observed differences provide evidence for real differencs in activity patterns or can be attributed to the noise from finite sample sizes.
+
+This can be done using the `overlapPerm` function, which tests against the null hypothesis that the densities generating the two observation vectors are equal during the requested time interval.
+
+To illustrate the functionality, consider again the macaques from zones 3 and 4 in the Kerinci data. Let's focus on the daytime hours between 5am and 7pm.
 
 ``` r
-perm <- overlapPerm(macaque3,macaque4,t0=tt[1],t1=tt[2],nperm=100)
+overlapPlotWindow(macaque3,macaque4,5,19)
+```
+
+![](vignette_files/figure-markdown_github/overlapPlot%20macaques-1.png)
+
+``` r
+perm <- overlapPerm(macaque3,macaque4,t0=5,t1=19,nperm=100)
 print(perm)
 ```
 
-    ##         observed reference p-value
-    ## overlap    0.428         1    0.25
-    ## excess     0.236         0    0.00
-    ## Two-sided permutation tests (parametric) for difference from refrence.
+    ##            observed reference p-value
+    ## overlap       0.733     0.951    0.05
+    ## net excess    0.035     0.000    0.27
+    ## Parametric permutation tests for difference from refrence.
+    ##  For the excess the test is two-sided.
