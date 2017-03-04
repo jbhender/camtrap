@@ -116,7 +116,7 @@ where $(\cdot)_+ = \min(\cdot,0)$.
 
 ## Finding the points of intersection
 The function `overlapCross` can be used to find the points at which
-two density curves cross. We will illustrate using the Kernici data
+two density curves cross. We will illustrate using the Kerinci data
 from the `overlap` package. 
 
 ```{r kernici}
@@ -147,8 +147,8 @@ Based on these images, tigers and pigs clearly follow different patterns of
 activity. However, in other cases such as when comparing the same species from
 different regions we may wish to assess the significance of an observed
 difference relative to a specific null hypothesis. For example, when making 
-intraspecies comparisions, one may wish to assess whether observed differences
-provide evidence for real differencs in activity patterns or can be attributed 
+intra-species comparisons, one may wish to assess whether observed differences
+provide evidence for real differences in activity patterns or can be attributed 
 to the noise from finite sample sizes.  
 
 This can be done using the `overlapPerm` function, which tests against the 
@@ -163,6 +163,30 @@ overlapPlotWindow(macaque3,macaque4,5,19)
 ```
 
 ```{r overlapPerm macaque}
-perm <- overlapPerm(macaque3,macaque4,t0=5,t1=19,nperm=100)
+perm <- overlapPerm(macaque3,macaque4,t0=5,t1=19,nperm=1000)
 print(perm)
 ```
+
+Focusing on the overlap row, the output from the permutation tests tells us that
+the observed overlap during the requested window was `r round(100*perm$table[1,1])`%. 
+Compare this to the reference value of `r round(100*perm$table[1,2])`%
+which is an estimate of the maximum overlap for the
+requested window. The reference value will always be one when considering the
+full day. The p-value tells us that from `r perm$nperm` simulations, only 
+`r round(perm$table[1,3]*100,1)`% had an overlap smaller than the actually observed
+overlap suggesting the observed differences are not purely attributable to chance.
+
+In contrast, the net excess during this window is not significantly different from 
+zero. This make sense given that our window includes the bulk of the activity for
+both sets of macaques since densities always integrate to one. 
+
+We can compare our result based on the overlap, to a Kolmogorov-Smirnoff test 
+comparing two distributions.
+```{r compare to ks.test}
+ks.test(macaque3,macaque4)
+perm <- overlapPerm(macaque3,macaque4,t0=0,t1=24,nperm=1000)
+print(perm)
+```
+
+This suggests the permutation test may be more powerful, though additional study
+is needed to ensure we are correctly controlling the type 1 error.  
