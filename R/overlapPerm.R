@@ -75,7 +75,7 @@ overlapPerm <- function(A,B,t0=0,t1=24,adjust=0.8,nperm=1e3,kmax=3,
 	 	
 	 table <- matrix(c(obs$overlap,overlapRef,p[1],obs$excess,excessRef,p[2]),
 	                 2,3,byrow=T)
-	 rownames(table) <- c('overlap','excess')
+	 rownames(table) <- c('overlap','net excess')
 	 colnames(table) <- c('observed','reference','p-value')
 	 
 	 out <- list(table=table,window=c(t0,t1),nperm=nperm,
