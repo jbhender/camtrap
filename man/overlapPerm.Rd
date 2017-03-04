@@ -5,8 +5,7 @@
 \title{Overlap window permutation tests.}
 \usage{
 overlapPerm(A, B, t0 = 0, t1 = 24, adjust = 0.8, nperm = 1000,
-  kmax = 3, parametric = T, two.sided = T, overlapRef = 1,
-  excessRef = 0)
+  kmax = 3, parametric = T, two.sided = T, excessRef = 0)
 }
 \arguments{
 \item{A}{Numeric vectors of sighting times in [0,2pi]}
@@ -24,18 +23,24 @@ overlapPerm(A, B, t0 = 0, t1 = 24, adjust = 0.8, nperm = 1000,
 \item{kmax}{See \code{\link{overlapEst}}.}
 
 \item{two.sided}{If \code{TRUE} the p-values returned for the excess are 
-two-sided.P-values for the overlap are always one-sided.}
+two-sided. P-values for the overlap are always one-sided.}
 
-\item{overlapRef}{The reference value against which to compare the
-observed overlap. The default is 1, which makes sense when comparing subsets
-of the same species.}
-
-\item{excessRef}{Like \code{overlapRef}, but for the excess.  The default 
-value is zero, which should make sense in most cases.}
+\item{excessRef}{The reference value against which to compare the
+observed excess.  The default is zero, which should make sense in most cases.}
 }
 \value{
-An object of class overlapPermObj containing a table of values and
-information about the function call.
+An object of class overlapPermObj; a list containing \describe{
+\item{table}{A table listing the observed overlap and excess in the window,
+their reference values under the null, and p-values from the permutation tests.}
+\item{window}{The requested window \code{c(t0,t1)}}
+\item{nperm}{The requested number of permtutations}
+\item{nperm,parametric,two.sided,}{The values passed in the funciton call.}
+\item{overlapRef}{The esitmated reference value, computed as:
+$
+\int_{t_0}^{t_1} \hat f_0(s) ds
+$}
+}
+\item{excessRef}{The reference value for the excess passed in the funciton call. }
 }
 \description{
 Assess the signficance of the overlap or excess in a window using a
@@ -46,6 +51,9 @@ This function estimates the probability of observing an
 overlap/excess in a given interval as extreme as the one observed under the
 null hypothesis that A and B actually come from the same distribution. By
 default, this hypothesis is tested by simulating new data A' and B' from a
-density estimated by concatenating A and B.  Setting \code{parametric = F} 
-will instead give a tradiational permutation test (not yet implemented.)
+Null density $f_0$ estimated by concatenating A and B.  Setting \code{parametric = F} 
+will instead give a traditional permutation test (not yet implemented.)
+}
+\seealso{
+{summary.overlapPermObj}
 }
