@@ -122,7 +122,7 @@ Examining the output above, we can say that the difference in the proportions of
 Finding the points of intersection
 ----------------------------------
 
-The function `overlapCross` can be used to find the points at which two density curves cross. We will illustrate using the Kernici data from the `overlap` package.
+The function `overlapCross` can be used to find the points at which two density curves cross. We will illustrate using the Kerinci data from the `overlap` package.
 
 ``` r
 data('kerinci')
@@ -175,7 +175,7 @@ overlapPlotWindow(macaque3,macaque4,xcenter='noon',tt[1],tt[2])
 Inference using Permutation Tests
 ---------------------------------
 
-Based on these images, tigers and pigs clearly follow different patterns of activity. However, in other cases such as when comparing the same species from different regions we may wish to assess the significance of an observed difference relative to a specific null hypothesis. For example, when making intraspecies comparisions, one may wish to assess whether observed differences provide evidence for real differencs in activity patterns or can be attributed to the noise from finite sample sizes.
+Based on these images, tigers and pigs clearly follow different patterns of activity. However, in other cases such as when comparing the same species from different regions we may wish to assess the significance of an observed difference relative to a specific null hypothesis. For example, when making intra-species comparisons, one may wish to assess whether observed differences provide evidence for real differences in activity patterns or can be attributed to the noise from finite sample sizes.
 
 This can be done using the `overlapPerm` function, which tests against the null hypothesis that the densities generating the two observation vectors are equal during the requested time interval.
 
@@ -188,12 +188,45 @@ overlapPlotWindow(macaque3,macaque4,5,19)
 ![](vignette_files/figure-markdown_github/overlapPlot%20macaques-1.png)
 
 ``` r
-perm <- overlapPerm(macaque3,macaque4,t0=5,t1=19,nperm=100)
+perm <- overlapPerm(macaque3,macaque4,t0=5,t1=19,nperm=1000)
 print(perm)
 ```
 
     ##            observed reference p-value
-    ## overlap       0.733     0.951    0.05
-    ## net excess    0.035     0.000    0.27
+    ## overlap       0.733     0.951   0.035
+    ## net excess    0.035     0.000   0.378
     ## Parametric permutation tests for difference from refrence.
-    ##  For the excess the test is two-sided.
+    ## For the excess the test is two-sided.
+
+Focusing on the overlap row, the output from the permutation tests tells us that the observed overlap during the requested window was 73%. Compare this to the reference value of 95% which is an estimate of the maximum overlap for the requested window. The reference value will always be one when considering the full day. The p-value tells us that from 1000 simulations, only 3.5% had an overlap smaller than the actually observed overlap suggesting the observed differences are not purely attributable to chance.
+
+In contrast, the net excess during this window is not significantly different from zero. This make sense given that our window includes the bulk of the activity for both sets of macaques since densities always integrate to one.
+
+We can compare our result based on the overlap, to a Kolmogorov-Smirnoff test comparing two distributions.
+
+``` r
+ks.test(macaque3,macaque4)
+```
+
+    ## Warning in ks.test(macaque3, macaque4): cannot compute exact p-value with
+    ## ties
+
+    ## 
+    ##  Two-sample Kolmogorov-Smirnov test
+    ## 
+    ## data:  macaque3 and macaque4
+    ## D = 0.2057, p-value = 0.1432
+    ## alternative hypothesis: two-sided
+
+``` r
+perm <- overlapPerm(macaque3,macaque4,t0=0,t1=24,nperm=1000)
+print(perm)
+```
+
+    ##            observed reference p-value
+    ## overlap       0.754         1   0.026
+    ## net excess    0.000         0   0.428
+    ## Parametric permutation tests for difference from refrence.
+    ## For the excess the test is two-sided.
+
+This suggests the permutation test may be more powerful, though additional study is needed to ensure we are correctly controlling the type 1 error.
