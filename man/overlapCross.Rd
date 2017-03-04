@@ -2,7 +2,7 @@
 % Please edit documentation in R/overlapCross.R
 \name{overlapCross}
 \alias{overlapCross}
-\title{Finds crossings of estimated densities}
+\title{Find crossings of estimated densities}
 \usage{
 overlapCross(A, B, adjust = 0.8, kmax = 3, n.grid = 128, scale24 = T)
 }
