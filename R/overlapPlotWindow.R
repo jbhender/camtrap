@@ -7,7 +7,7 @@
 #' overlap package with credit to its author, Mike Meredith.
 #' However, not all functionality from that function has been 
 #' put in place here yet -- rug plotting reamins to do. Currently does not 
-#' handle wrapping of window around edges of plot  
+#' handle wrapping of window around edges of plot.  
 #'   
 #' @inheritParams overlapEstWindow
 #' @param t0,t1 Window times are not scaled internally and should chosen by 
