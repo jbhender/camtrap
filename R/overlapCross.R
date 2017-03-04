@@ -1,4 +1,4 @@
-#' Finds crossings of estimated densities
+#' Find crossings of estimated densities
 #' 
 #' \code{overlapCross} Fits densities to provided data and returns the 
 #' locations where they cross.
@@ -7,13 +7,13 @@
 #' a few crossings. It first estimates densities using the provided options
 #' and data. It then finds intervals where crossings occur using a grid search 
 #' with \code{n.grid} points over [0,2pi] before calling \code{\link{uniroot}}
-#' to numerically approximat the crossings in each interval using the
+#' to numerically approximate the crossings in each interval using the
 #'difference between densities.
 #' 
 #' @param A,B Numeric vectors of sighting times in radians, i.e. [0,2pi]
 #' @param adjust Scaling factor for the bandwidth estimate, 
-#' see \code{\link{overlap::overlapEst}}
-#' @param kmax Paramater passed to getBandWidth, see overlapEst
+#' see \code{\link{overlapEst}}
+#' @param kmax Parameter passed to \code{getBandWidth}, see \code{overlapEst}.
 #' @param n.grid The number of grid points used to find rough crossing windows
 #' @param scale24 Logical, if true roots are multiplied by 12/pi for 24hr scale 
 #' @return A vector of crossings times on the requested scale.
