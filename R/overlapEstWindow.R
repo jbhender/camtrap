@@ -7,7 +7,7 @@
 ##' \code{\link{densityFit}} to estimate density functions for the
 ##' times provided as \code{A} and \code{B}. The various overlap estimates 
 ##' described in \code{\link{overlapEst}} are forgone in favor of 
-##' adapative quadarature using \code{\link{integrate}}. The arguments
+##' adaptive quadrature using \code{\link{integrate}}. The arguments
 ##' \code{t0} and \code{t1} are transformed to radian cscale and then
 ##' used as the limits of integration, wrapped when appropriate.  
 ##' 
@@ -20,11 +20,11 @@
 ##' the window requested using \code{t0} and \code{t1}.}
 ##' \item{excess}{Contains the area between the density curves within 
 ##' the window. If the functions cross within the window, this is the net
-##' difference. Differencs are for \eqn{f_A} less \eqn{f_B}.}
+##' difference. Differences are for \eqn{f_A} less \eqn{f_B}.}
 ##' \item{window}{The requested interval.}
 ##' }
 ##' 
-##' @author James Henderson based on work by 
+##' @author James Henderson based on work by Mike Meredith and Martin Rideout.
 ##' @export
 ##' 
 
